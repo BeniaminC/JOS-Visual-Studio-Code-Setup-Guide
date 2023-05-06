@@ -1,7 +1,7 @@
 # jos_vscode_setup_guide (INCOMPLETE AS OF NOW)
 How to setup Visual Studio Code to work with JOS.
 
-I have been wanting to finish this guide, but I can't seem to get it to compile on my desktop. It compiles on my laptop just fine. I need to ensure it works on a fresh VM before I release a full guide.
+I have been wanting to finish this guide, but I can't seem to get it to compile on my desktop. It compiles on my laptop just fine. I need to ensure it works on a fresh VM before I release a full guide. I promise you, it is possible to debug using Visual Studio Code, but that does not mean it will necessarily be easier. You still need to learn the debugging commands shown in your labs.
 
 Below is what it looks like
 ![Alt text](images/jos_vscode_debugging.png)
