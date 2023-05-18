@@ -194,3 +194,53 @@ After we have successfully set up our tasks, we can launch gdb for debugging. We
         }
 ```
 ## Step 7: Debugging the Kernel
+
+Now you can finally start debugging. First place a breakpoint in the code to start debugging:
+
+![Alt text](images/Screenshot%202023-05-17%20203320.png)
+
+Then start debugging by pressing **F5**.
+
+You track variables while debugging:
+
+![Alt text](images/Screenshot%202023-05-17%20203509.png)
+
+You can watch specific variables:
+
+![Alt text](images/Screenshot%202023-05-17%20203717.png)
+
+And even track the callstack:
+
+![Alt text](images/Screenshot%202023-05-17%20203848.png)
+
+Run commands in the **Debug Console** using `-exec <command>`. For example, below the command `-exec info registers` is run:
+
+![Alt text](images/Screenshot%202023-05-17%20204049.png)
+
+> You should still run GDB commands for the labs!
+- `Ctrl-c`\
+    Halt the machine and break in to GDB at the current instruction. If QEMU has multiple virtual CPUs, this halts all of them.
+- `c (or continue)`\
+    Continue execution until the next breakpoint or Ctrl-c.
+- `si (or stepi)`\
+    Execute one machine instruction.
+- `b function or b file:line (or breakpoint)`\
+    Set a breakpoint at the given function or line.
+- `b *addr (or breakpoint)`\
+    Set a breakpoint at the EIP addr.
+- `set print pretty`\
+    Enable pretty-printing of arrays and structs.
+- `info registers`\
+    Print the general purpose registers, eip, eflags, and the segment selectors. For a much more thorough dump of the machine register state, see QEMU’s own info   registers command.
+- `x/Nx addr`\
+    Display a hex dump of N words starting at virtual address addr. If N is omitted, it defaults to 1. addr can be any expression.
+- `x/Ni addr`\
+    Display the N assembly instructions starting at addr. Using $eip as addr will display the instructions at the current instruction pointer.
+- `symbol-file file`\
+    (Lab 3+) Switch to symbol file file. When GDB attaches to QEMU, it has no notion of the process boundaries within the virtual machine, so we have to tell it which symbols to use. By default, we configure GDB to use the kernel symbol file, obj/kern/kernel. If the machine is running user code, say hello.c, you can switch to the hello symbol file using symbol-file obj/user/hello.
+- `thread n`\
+    GDB focuses on one thread (i.e., CPU) at a time. This command switches that focus to thread n, numbered from zero.
+- `info threads`\\
+    List all threads (i.e., CPUs), including their state (active or halted) and what function they’re in.
+
+> QEMU represents each virtual CPU as a thread in GDB, so you can use all of GDB’s thread-related commands to view or manipulate QEMU’s virtual CPUs.
