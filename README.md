@@ -5,7 +5,7 @@
 
 This is a step-by-step guide to setting up a local operating system debugging environment. This will be similar to the **Lab Setup** section on the website for an operating system class. It will include those steps as well, and some of those steps will be explicitly omitted.
 
-This idea of this guide is to create a local environment to debug the kernel. This creates a nice interface for debugging the kernel.
+The idea of this guide is to create a local environment to debug the kernel. This creates a nice interface for debugging the kernel.
 
 ## Step 1: Windows Subsystem for Linux
 WSL is Windows Subsystem for Linux. It allows Windows to run a linux system.
