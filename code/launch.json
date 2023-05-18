@@ -1,0 +1,48 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Kernel",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/obj/kern/kernel",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Change back to the workspace folder",
+                    "text": "cd ${workspaceRoot}",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Launch Qemu (no graphic)",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "miDebuggerArgs": "",
+            "targetArchitecture": "x86_64",
+            "customLaunchSetupCommands": [
+                {
+                    "text": "target remote localhost:1234",
+                    "description": "Connect to QEMU remote debugger"
+                },
+                {
+                    "text": "symbol-file obj/kern/kernel",
+                    "description": "Get kernel symbols"
+                },
+                // {
+                //     "text": "set architecture i8086",
+                //     "description": "Sets the current architecture"
+                // }
+            ],
+            "avoidWindowsConsoleRedirection": true
+        }
+    ]
+}

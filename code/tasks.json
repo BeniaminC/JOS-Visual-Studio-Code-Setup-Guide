@@ -1,0 +1,50 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Build kernel",
+            "command": "make --directory=${workspaceFolder}",
+            "args": [
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Launch Qemu (no graphic)",
+            "command": "make qemu-nox-gdb",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "Build kernel",
+            "isBackground": true,
+            "problemMatcher": [
+                {
+                  "pattern": [
+                    {
+                      "regexp": ".",
+                      "file": 1,
+                      "location": 2,
+                      "message": 3
+                    }
+                  ],
+                  "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "Now run 'gdb'",
+                  }
+                }
+            ]
+
+        }
+    ],
+    "version": "2.0.0"
+}

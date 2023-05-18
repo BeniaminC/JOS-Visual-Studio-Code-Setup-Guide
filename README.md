@@ -1,11 +1,7 @@
-# jos_vscode_setup_guide (INCOMPLETE AS OF NOW)
-How to setup Visual Studio Code to work with JOS.
+# Quick Guide: JOS Setting Up Local Debugging with Windows Subsystem for Linux, Visual Studio Code, QEMU, and GDB
+**By Beniamin Condrea**
 
-Below is what it looks like
 ![Alt text](images/jos_vscode_debugging.png)
-
-# Setting Up Local Debugging with Windows Subsystem for Linux, Visual Studio Code, QEMU, and GDB
-### By Beniamin Condrea
 
 This is a step-by-step guide to setting up your local OS2 environment. This will be similar to the **Lab Setup** section on the website for your OS2 class. It will include those steps as well, in which some of those steps will be explicitly omitted.
 
@@ -80,7 +76,7 @@ Now that we have properly set up our environment for our work, we need to create
 
 ![Alt text](images/gdb%20port.png)
 
-# #Step 5: Setting Up Tasks
+## Step 5: Setting Up Tasks
 
 We now need to set up tasks for building our kernel, and also to launch our qemu.
 
