@@ -3,19 +3,19 @@
 
 ![Alt text](images/jos_vscode_debugging.png)
 
-This is a step-by-step guide to setting up your local OS2 environment. This will be similar to the **Lab Setup** section on the website for your OS2 class. It will include those steps as well, in which some of those steps will be explicitly omitted.
+This is a step-by-step guide to setting up a local operating system debugging environment. This will be similar to the **Lab Setup** section on the website for an operating system class. It will include those steps as well, and some of those steps will be explicitly omitted.
 
-This idea of this guide is too allow you to debug your kernel while still able to run commands as before. That way, you can have a nice interface for debugging your labs.
+This idea of this guide is to create a local environment to debug the kernel. This creates a nice interface for debugging the kernel.
 
 ## Step 1: Windows Subsystem for Linux
-WSL is Windows Subsystem for Linux. It allows your to run a linux system through windows
+WSL is Windows Subsystem for Linux. It allows Windows to run a linux system.
 > Website is found here: https://learn.microsoft.com/en-us/windows/wsl/install
-1. Install your favorite GNU/Linux distribution from the Microsoft Store (Ubuntu is the most common one)
+1. Install a GNU/Linux distribution from the Microsoft Store (Ubuntu is the most common one)
 2. In **PowerShell** or **Command Prompt**, run the follow command to install WSL:
    ```powershell
    wsl --install
    ```
-   This command will enable the required optional components, download the latest linux kernel, set WSL 2 as your default, and install a Linux for you (Ubuntu as default, you can change this).
+   This command will enable the required optional components, download the latest linux kernel, set WSL 2 as the default, and install (Ubuntu as default).
    > The command above will only work if WSL is not installed. Trying running
    > `
    > wsl --list --online
@@ -26,19 +26,19 @@ WSL is Windows Subsystem for Linux. It allows your to run a linux system through
    > `
    > to install a distro.
 
-   By Default, the installed Linux distribution will be Ubuntu. You can change this with the `-d` flag:
+   By Default, the installed Linux distribution will be Ubuntu. Change this with the `-d` flag:
    - Change Linux Distribution: `wsl --install -d <distibution Name>`
    - View list of Linux Distributions: `wsl --list --online`
    - Install additional distributions: `wsl --install -d <distibution Name>`
 
-   > For Linux/Bash command line, you can instead run the executable: `wsl.exe --install -d <Distribution Name>` or list via `wsl.exe --list --online`
+   > For Linux/Bash command line, run the executable: `wsl.exe --install -d <Distribution Name>` or list via `wsl.exe --list --online`
 
-2. Restart your machine
-3. Set up your linux username and password
-    You can now access your WSL by selecting **Start** then opening **Ubuntu** or any other distribution you installed. Select **Ubuntu on Windows** then type in your username and password. This is specific for the Linux distribution and it has no effect on your Windows settings. This will allow you to run **sudo** commands (Super User Do)
+2. Restart the machine
+3. Set up a linux username and password
+     Access WSL by selecting **Start** then opening **Ubuntu** or any other distribution installed. Select **Ubuntu on Windows** then type in the username and password. This is specific for the Linux distribution and it has no effect on the Windows settings. Then run **sudo** commands (Super User Do)
 
 4. Update and upgrade packages
-    You should be in the habit of updating and upgrading packages in Linux by running the command below:
+    update and upgrade packages in Linux by running the command below:
     ```Bash
     sudo apt update && sudo apt upgrade
     ```
@@ -54,15 +54,15 @@ WSL is Windows Subsystem for Linux. It allows your to run a linux system through
    - Remote - WSL
    - C/C++ (optional)
    - Git History (optional)
-    > The **Remote Developer extension pack** allows you to run WSL, SSH, and a remote container for editing and debugging code with all the Visual Studio Code features.
-3. Locate your home directory in Ubuntu, it should be located in `/home/<username>/`
+    > The **Remote Developer extension pack** allows running WSL, SSH, and a remote container for editing and debugging code with all the Visual Studio Code features.
+3. Locate the home directory in Ubuntu, it should be located in `/home/<username>/`
 
 ![Alt text](images/ubuntu_home.png)
 
 4. Once in the directory, run the code command `code .`. This command will open Visual Studio Code inside the current working directory.
     > Running the `code` command requires the remote development extension pack for WSL.
 
-    This is where we will run our `git clone` command for our assignments in the *integrated terminal*.
+    This is the location to `git clone` for assignments in the *integrated terminal*.
 
 ```bash
 git clone git@gitlab.enexploitable.systems:your-id/jos.git
@@ -71,16 +71,16 @@ cd jos
 
 ## Step 4: Setting Up Kernel Debugging
 
-Now that we have properly set up our environment for our work, we need to create tasks for our JOS makefile. Because we are working locally, we can manually set our gdb port to a number, perhaper `1234`. In our **GNUmakefile**:
+Now that the environment for work is properly set up, create tasks for JOS makefile. Because this is local, manually set gdb port to a number, perhaps `1234`. In the **GNUmakefile**:
 
 
 ![Alt text](images/gdb%20port.png)
 
 ## Step 5: Setting Up Tasks
 
-We now need to set up tasks for building our kernel, and also to launch our qemu.
+Next, set up tasks for building the kernel, and also to launch the qemu.
 
-In our `.vscode/tasks.json`, we need to first create a task to build our kernel using the `make` command:
+In `.vscode/tasks.json`, first create a task to build the kernel using the `make` command:
 
 ```json
         {
@@ -102,7 +102,7 @@ In our `.vscode/tasks.json`, we need to first create a task to build our kernel 
         },
 ```
 
-Then we need to create a qemu launch tasks with no graphics.
+Then create a qemu launch tasks with no graphics.
 
 ```json
 {
@@ -134,15 +134,17 @@ Then we need to create a qemu launch tasks with no graphics.
 
         }
 ```
-Notice that it requires a **problem matcher** with an **end pattern** so that the build can know when the qemu has started. We need to let the prelaunch tasks know when the qemu has finished before it can attach. Notice that the makefile runs a prompt "Now run 'gdb'. That is the pattern we are trying to match in the terminal
+Notice that it requires a **problem matcher** with an **end pattern** so that a task can start *after* the terminal pattern. The debug tasks will start after qemu has finished. Notice that the makefile runs a prompt "Now run 'gdb'. That is the pattern to match in the terminal.
+
+> The terminal output can be changed for the problem matcher.
 
 ![Alt text](images/Screenshot%202023-05-17%20202758.png)
 
-> You can add other launches from the makefile such as `make qemu-nox`, `print-qemu` etc.
+>  Optional: Add other launches from the makefile such as `make qemu-nox`, `print-qemu` etc.
 
 ## Step 6: Setting Up Lauches
 
-After we have successfully set up our tasks, we can launch gdb for debugging. We first create a **prelaunch task** to first run (QEMU), then we run gdb.
+After successfully seting up tasks, launch gdb for debugging. First, create a **prelaunch task** to first run (QEMU), then run gdb.
 
 ```json
 {
@@ -191,17 +193,17 @@ After we have successfully set up our tasks, we can launch gdb for debugging. We
 ```
 ## Step 7: Debugging the Kernel
 
-Now you can finally start debugging. First place a breakpoint in the code to start debugging:
+Now start debugging. First, place a breakpoint in the code to start debugging:
 
 ![Alt text](images/Screenshot%202023-05-17%20203320.png)
 
 Then start debugging by pressing **F5**.
 
-You track variables while debugging:
+Track variables while debugging:
 
 ![Alt text](images/Screenshot%202023-05-17%20203509.png)
 
-You can watch specific variables:
+Watch specific variables:
 
 ![Alt text](images/Screenshot%202023-05-17%20203717.png)
 
@@ -213,7 +215,7 @@ Run commands in the **Debug Console** using `-exec <command>`. For example, belo
 
 ![Alt text](images/Screenshot%202023-05-17%20204049.png)
 
-> You should still run GDB commands for the labs!
+> Some sections of the kernel require running GDB commands for the labs!
 - `Ctrl-c`\
     Halt the machine and break in to GDB at the current instruction. If QEMU has multiple virtual CPUs, this halts all of them.
 - `c (or continue)`\
