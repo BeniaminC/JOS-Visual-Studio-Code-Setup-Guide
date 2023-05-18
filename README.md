@@ -1,8 +1,6 @@
 # jos_vscode_setup_guide (INCOMPLETE AS OF NOW)
 How to setup Visual Studio Code to work with JOS.
 
-I have been wanting to finish this guide, but I can't seem to get it to compile on my desktop. It compiles on my laptop just fine. Perhaps I need to install an older QEMU on my WSL.
-
 Below is what it looks like
 ![Alt text](images/jos_vscode_debugging.png)
 
@@ -52,7 +50,7 @@ WSL is Windows Subsystem for Linux. It allows your to run a linux system through
     - QEMU
     - Git
     ```Bash
-    sudo apt-get install -y git && sudo apt-get install -y qemu && sudo apt-get install -y qemu-system-i386
+    sudo apt-get install -y git && sudo apt-get install -y qemu && sudo apt-get install -y qemu-system-i386 && sudo apt-get install -y gcc-multilib
     ```
 ## Step 3: Setup Visual Studio Code for WSL
 1. Install Visual Studio Code
@@ -82,5 +80,166 @@ Now that we have properly set up our environment for our work, we need to create
 
 ![Alt text](images/gdb%20port.png)
 
+# #Step 5: Setting Up Tasks
 
+We now need to set up tasks for building our kernel, and also to launch our qemu.
+
+In our `.vscode/tasks.json`, we need to first create a task to build our kernel using the `make` command:
+
+```json
+        {
+            "type": "shell",
+            "label": "Build kernel",
+            "command": "make --directory=${workspaceFolder}",
+            "args": [
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+```
+
+Then we need to create a qemu launch tasks with no graphics.
+
+```json
+{
+            "type": "shell",
+            "label": "Launch Qemu (no graphic)",
+            "command": "make qemu-nox-gdb",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "Build kernel",
+            "isBackground": true,
+            "problemMatcher": [
+                {
+                  "pattern": [
+                    {
+                      "regexp": ".",
+                      "file": 1,
+                      "location": 2,
+                      "message": 3
+                    }
+                  ],
+                  "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "Now run 'gdb'",
+                  }
+                }
+            ]
+
+        }
+```
+Notice that it requires a **problem matcher** with an **end pattern** so that the build can know when the qemu has started. We need to let the prelaunch tasks know when the qemu has finished before it can attach. Notice that the makefile runs a prompt "Now run 'gdb'. That is the pattern we are trying to match in the terminal
+
+![Alt text](images/Screenshot%202023-05-17%20202758.png)
+
+> You can add other launches from the makefile such as `make qemu-nox`, `print-qemu` etc.
+
+## Step 6: Setting Up Lauches
+
+After we have successfully set up our tasks, we can launch gdb for debugging. We first create a **prelaunch task** to first run (QEMU), then we run gdb.
+
+```json
+{
+            "name": "Debug Kernel",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/obj/kern/kernel",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Change back to the workspace folder",
+                    "text": "cd ${workspaceRoot}",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Launch Qemu (no graphic)",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "miDebuggerArgs": "",
+            "targetArchitecture": "x86_64",
+            "customLaunchSetupCommands": [
+                {
+                    "text": "target remote localhost:1234",
+                    "description": "Connect to QEMU remote debugger"
+                },
+                {
+                    "text": "symbol-file obj/kern/kernel",
+                    "description": "Get kernel symbols"
+                },
+                // {
+                //     "text": "set architecture i8086",
+                //     "description": "Sets the current architecture"
+                // }
+            ],
+            "avoidWindowsConsoleRedirection": true
+        }
+```
 ## Step 7: Debugging the Kernel
+Now you can finally start debugging. First place a breakpoint in the code to start debugging:
+
+![Alt text](images/Screenshot%202023-05-17%20203320.png)
+
+Then start debugging by pressing **F5**.
+
+You track variables while debugging:
+
+![Alt text](images/Screenshot%202023-05-17%20203509.png)
+
+You can watch specific variables:
+
+![Alt text](images/Screenshot%202023-05-17%20203717.png)
+
+And even track the callstack:
+
+![Alt text](images/Screenshot%202023-05-17%20203848.png)
+
+Run commands in the **Debug Console** using `-exec <command>`. For example, below the command `-exec info registers` is run:
+
+![Alt text](images/Screenshot%202023-05-17%20204049.png)
+
+> You should still run GDB commands for the labs!
+- `Ctrl-c`\
+    Halt the machine and break in to GDB at the current instruction. If QEMU has multiple virtual CPUs, this halts all of them.
+- `c (or continue)`\
+    Continue execution until the next breakpoint or Ctrl-c.
+- `si (or stepi)`\
+    Execute one machine instruction.
+- `b function or b file:line (or breakpoint)`\
+    Set a breakpoint at the given function or line.
+- `b *addr (or breakpoint)`\
+    Set a breakpoint at the EIP addr.
+- `set print pretty`\
+    Enable pretty-printing of arrays and structs.
+- `info registers`\
+    Print the general purpose registers, eip, eflags, and the segment selectors. For a much more thorough dump of the machine register state, see QEMU’s own info   registers command.
+- `x/Nx addr`\
+    Display a hex dump of N words starting at virtual address addr. If N is omitted, it defaults to 1. addr can be any expression.
+- `x/Ni addr`\
+    Display the N assembly instructions starting at addr. Using $eip as addr will display the instructions at the current instruction pointer.
+- `symbol-file file`\
+    (Lab 3+) Switch to symbol file file. When GDB attaches to QEMU, it has no notion of the process boundaries within the virtual machine, so we have to tell it which symbols to use. By default, we configure GDB to use the kernel symbol file, obj/kern/kernel. If the machine is running user code, say hello.c, you can switch to the hello symbol file using symbol-file obj/user/hello.
+- `thread n`\
+    GDB focuses on one thread (i.e., CPU) at a time. This command switches that focus to thread n, numbered from zero.
+- `info threads`\\
+    List all threads (i.e., CPUs), including their state (active or halted) and what function they’re in.
+
+> QEMU represents each virtual CPU as a thread in GDB, so you can use all of GDB’s thread-related commands to view or manipulate QEMU’s virtual CPUs.
