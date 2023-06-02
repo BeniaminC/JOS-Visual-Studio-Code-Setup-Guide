@@ -1,15 +1,19 @@
 # Quick Guide: JOS Setting Up Local Debugging with Windows Subsystem for Linux, Visual Studio Code, QEMU, and GDB
 **By Beniamin Condrea**
 
+> NOTE: tested with **Ubuntu 22.04 LTS**
+
 ![Alt text](images/jos_vscode_debugging.png)
 
-This is a step-by-step guide to setting up a local operating system debugging environment. This will be similar to the **Lab Setup** section on the website for an operating system class. It will include those steps as well, and some of those steps will be explicitly omitted.
+This is a step-by-step guide to setting up a local operating system debugging environment. This will be similar to the **Lab Setup** section on the website for an operating system class. It will include those steps as well, and some of those steps will be explicitly omitted. Setting up a Linux subsystem is useful, especially if you have other project (i.e. CUDA projects) which perform better on a Linux system.
 
-The idea of this guide is to create a local environment to debug the kernel. This creates a nice interface for debugging the kernel.
+> You should read the lab setup instructions carefully and fully *before* going through this guide. You first want a good general idea on how to set up the assignments. Do not skip on any class notes or readings, as this class is generally difficult.
+
+The idea of this guide is to create a local environment to debug the kernel. This creates a nice interface for debugging the kernel. The major advantage is the portability of it being local and the debugging interface.
 
 ## Step 1: Windows Subsystem for Linux
-WSL is Windows Subsystem for Linux. It allows Windows to run a linux system.
-> Website is found here: https://learn.microsoft.com/en-us/windows/wsl/install
+WSL (Windows Subsystem for Linux) allows Windows to run a linux system.
+> If you are interested in a more robust guide, here is the link: https://learn.microsoft.com/en-us/windows/wsl/install
 1. Install a GNU/Linux distribution from the Microsoft Store (Ubuntu is the most common one)
 2. In **PowerShell** or **Command Prompt**, run the follow command to install WSL:
    ```powershell
@@ -31,7 +35,9 @@ WSL is Windows Subsystem for Linux. It allows Windows to run a linux system.
    - View list of Linux Distributions: `wsl --list --online`
    - Install additional distributions: `wsl --install -d <distibution Name>`
 
-   > For Linux/Bash command line, run the executable: `wsl.exe --install -d <Distribution Name>` or list via `wsl.exe --list --online`
+   > If you are in Linux/Bash command line, you can run the executable: `wsl.exe --install -d <Distribution Name>` or list the subsystems via `wsl.exe --list --online` (as shown below)
+
+![Alt text](images/Screenshot%202023-06-01%20214016.png)
 
 2. Restart the machine
 3. Set up a linux username and password
@@ -48,6 +54,8 @@ WSL is Windows Subsystem for Linux. It allows Windows to run a linux system.
     ```Bash
     sudo apt-get install -y git && sudo apt-get install -y qemu && sudo apt-get install -y qemu-system-i386 && sudo apt-get install -y gcc-multilib
     ```
+> Note: if you do not install **gcc-multilib**, you will get an error: `Undefined reference to '__divdi3'`
+
 ## Step 3: Setup Visual Studio Code for WSL
 1. Install Visual Studio Code
 2. Install VSCode extensions:
@@ -59,10 +67,16 @@ WSL is Windows Subsystem for Linux. It allows Windows to run a linux system.
 
 ![Alt text](images/ubuntu_home.png)
 
-4. Once in the directory, run the code command `code .`. This command will open Visual Studio Code inside the current working directory.
-    > Running the `code` command requires the remote development extension pack for WSL.
+4. Once in the directory, run the code command
+```bash
+code .
+```
+![Alt text](images/ubuntu_to_code.png)
+This command will open Visual Studio Code inside the current working directory.
 
-    This is the location to `git clone` for assignments in the *integrated terminal*.
+> Running the `code` command requires the remote development extension pack for WSL.
+
+This is the location to `git clone` for assignments in the *integrated terminal*.
 
 ```bash
 git clone git@gitlab.enexploitable.systems:your-id/jos.git
@@ -134,7 +148,7 @@ Then create a qemu launch tasks with no graphics.
 
         }
 ```
-Notice that it requires a **problem matcher** with an **end pattern** so that a task can start *after* the terminal pattern. The debug tasks will start after qemu has finished. Notice that the makefile runs a prompt "Now run 'gdb'. That is the pattern to match in the terminal.
+Notice that it requires a **problem matcher** with an **end pattern** so that a task can start *after* the terminal pattern. The debug tasks will start after qemu has finished. Notice that the makefile runs a prompt "Now run 'gdb'". That is the pattern to match in the terminal.
 
 > The terminal output can be changed for the problem matcher.
 
