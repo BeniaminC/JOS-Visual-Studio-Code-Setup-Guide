@@ -39,9 +39,9 @@ WSL (Windows Subsystem for Linux) allows Windows to run a linux system.
    > to install a distro.
 
    By Default, the installed Linux distribution will be Ubuntu. Change this with the `-d` flag:
-   - Change Linux Distribution: `wsl --install -d <distibution Name>`
+   - Change Linux Distribution: `wsl --install -d <distribution Name>`
    - View list of Linux Distributions: `wsl --list --online`
-   - Install additional distributions: `wsl --install -d <distibution Name>`
+   - Install additional distributions: `wsl --install -d <distribution Name>`
 
    > If you are in Linux/Bash command line, you can run the executable: `wsl.exe --install -d <Distribution Name>` or list the subsystems via `wsl.exe --list --online` (as shown below)
 
@@ -166,7 +166,7 @@ Notice that it requires a **problem matcher** with an **end pattern** so that a 
 
 ## Step 6: Setting Up Lauches
 
-After successfully seting up tasks, launch gdb for debugging. First, create a **prelaunch task** to first run (QEMU), then run gdb.
+After successfully setting up tasks, launch gdb for debugging. First, create a **prelaunch task** to first run (QEMU), then run gdb.
 
 ```json
 {
