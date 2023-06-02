@@ -1,7 +1,15 @@
 # Quick Guide: JOS Setting Up Local Debugging with Windows Subsystem for Linux, Visual Studio Code, QEMU, and GDB
 **By Beniamin Condrea**
 
-> NOTE: tested with **Ubuntu 22.04 LTS**
+> NOTE: tested with **Ubuntu 22.04 LTS**. Please report any bugs in the GitHub "issues".
+
+```
+:::REPORT TEMPLATE:::
+Linux distribution:
+Commands:
+Compilation errors shown:
+Describe how to reproduce the problem:
+```
 
 ![Alt text](images/jos_vscode_debugging.png)
 
